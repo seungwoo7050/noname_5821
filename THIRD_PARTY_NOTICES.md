@@ -10,6 +10,7 @@ repository.
 | Django | 5.2.17 | PyPI / `django/django` | BSD-3-Clause | authentication, administration, ORM, transactions, forms, HTTP API |
 | psycopg (`binary` extra) | 3.3.4 | PyPI / `psycopg/psycopg` | LGPL-3.0-or-later | PostgreSQL protocol; server-side database traffic only |
 | jsonschema | 4.26.0 | PyPI / `python-jsonschema/jsonschema` | MIT | checked-in public API fixture validation; no network behavior |
+| pip-audit | 2.10.1 | PyPI / `pypa/pip-audit` | Apache-2.0 | local/CI Python dependency advisory audit |
 | Ruff | 0.16.5 | PyPI / `astral-sh/ruff` | MIT | local/CI Python linting only |
 | Astro | 7.2.9 | npm / `withastro/astro` | MIT | server-rendered public web application and routing |
 | `@astrojs/node` | 11.1.4 | npm / `withastro/adapters` | MIT | standalone Node server adapter |

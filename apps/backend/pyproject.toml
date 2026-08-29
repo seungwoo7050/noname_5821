@@ -10,7 +10,7 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["ruff==0.16.5"]
+dev = ["pip-audit==2.10.1", "ruff==0.16.5"]
 
 [tool.ruff]
 line-length = 100
