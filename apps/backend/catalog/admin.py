@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import Game, GameAlias, Platform, PlaytimeObservation
+from .services import create_draft_observation
 
 
 class AliasInline(admin.TabularInline):
@@ -30,9 +31,21 @@ class PlaytimeObservationAdmin(admin.ModelAdmin):
         "moderation_state",
         "id",
     )
+    exclude = ("created_by",)
     readonly_fields = ("payload_fingerprint", "moderation_state", "created_at")
 
     def save_model(self, request, obj, form, change):
-        if not change:
-            obj.created_by = request.user
-        super().save_model(request, obj, form, change)
+        if change:
+            obj.save()
+            return
+        receipt = create_draft_observation(
+            operator=request.user,
+            operation_uuid=obj.operation_uuid,
+            game=obj.game,
+            platform=obj.platform,
+            completion_scope=obj.completion_scope,
+            minutes=obj.minutes,
+            provenance_identity=obj.provenance_identity,
+            observation_date=obj.observation_date,
+        )
+        obj.__dict__.update(receipt.observation.__dict__)
