@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:17.6-alpine@sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94
+    environment:
+      POSTGRES_DB: clear_time
+      POSTGRES_USER: clear_time
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "127.0.0.1:55432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clear_time -d clear_time"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - clear-time-postgres:/var/lib/postgresql/data
+
+volumes:
+  clear-time-postgres:

@@ -7,5 +7,11 @@ coverage/
 dist/
 build/
 node_modules/
+.venv/
+__pycache__/
+*.py[cod]
+.astro/
+playwright-report/
+test-results/
 tmp/
 .cache/
