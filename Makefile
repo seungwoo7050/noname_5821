@@ -1,5 +1,6 @@
 SHELL := /bin/sh
 UV := UV_CACHE_DIR=../../.cache/uv uv
+NODE := fnm exec --using 22.22.0
 
 .PHONY: check test build gate local-up local-down migrate
 
@@ -7,17 +8,20 @@ check:
 	cd apps/backend && $(UV) run ruff check .
 	cd apps/backend && $(UV) run python manage.py check
 	cd apps/backend && $(UV) run python manage.py makemigrations --check --dry-run
-	cd apps/web && npm run check
+	cd apps/web && $(NODE) npm run check
 
 test:
 	cd apps/backend && $(UV) run python manage.py test
-	cd apps/web && npm test
+	cd apps/web && $(NODE) npm test
 
 build:
-	cd apps/web && npm run build
+	cd apps/web && $(NODE) npm run build
 
-gate: check test build
-	./scripts/check-secrets.sh
+gate:
+	./scripts/full-gate.sh
+
+browser:
+	cd apps/web && $(NODE) npm run test:browser
 
 local-up:
 	docker compose -f infra/local/compose.yaml up -d --wait

@@ -13,5 +13,6 @@ __pycache__/
 .astro/
 playwright-report/
 test-results/
+output/
 tmp/
 .cache/
