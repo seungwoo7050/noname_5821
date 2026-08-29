@@ -5,7 +5,7 @@ import uuid
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
-from catalog.models import CompletionScope, Game, GameAlias, Lifecycle, Platform
+from catalog.models import AuditEvent, CompletionScope, Game, GameAlias, Lifecycle, Platform
 from catalog.services import create_draft_observation, moderate_observation
 
 GAME_ID = uuid.UUID("11111111-1111-4111-8111-111111111111")
@@ -108,6 +108,9 @@ class Command(BaseCommand):
                 {
                     "observation_id": str(receipt.observation.id),
                     "draft_operation_uuid": str(receipt.observation.operation_uuid),
+                    "draft_audit_event_id": str(
+                        AuditEvent.objects.get(operation_uuid=receipt.observation.operation_uuid).id
+                    ),
                     "decision_id": str(receipt.decision.id),
                     "moderation_operation_uuid": str(receipt.decision.operation_uuid),
                     "audit_event_id": str(receipt.audit_event.id),
@@ -115,7 +118,14 @@ class Command(BaseCommand):
                 for receipt in moderation_receipts
             ],
             "rejected_observation_id": str(rejected.observation.id),
+            "rejected_draft_audit_event_id": str(
+                AuditEvent.objects.get(operation_uuid=rejected.observation.operation_uuid).id
+            ),
+            "rejected_moderation_audit_event_id": str(rejected.audit_event.id),
             "draft_observation_id": str(observations[4].id),
+            "draft_only_audit_event_id": str(
+                AuditEvent.objects.get(operation_uuid=observations[4].operation_uuid).id
+            ),
             "aggregate_revision_id": str(revision.id),
             "aggregate_revision_number": revision.revision_number,
             "aggregate_key_id": str(revision.aggregate_key_id),
