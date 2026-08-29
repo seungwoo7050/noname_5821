@@ -1,18 +1,70 @@
 ---
-const title = "클리어타임";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { PublicApiError, searchGames, type GameSummary } from "../lib/api";
+
+const apiBase = import.meta.env.API_BASE_URL ?? "http://127.0.0.1:8000";
+const query = Astro.url.searchParams.get("query")?.trim() ?? "";
+let results: GameSummary[] = [];
+let pageError: PublicApiError | null = null;
+
+if (query) {
+  if (query.length > 100) {
+    pageError = new PublicApiError("invalid_search_query", 400, crypto.randomUUID());
+  } else {
+    try {
+      results = (await searchGames(query, apiBase)).results;
+    } catch (error) {
+      pageError = error instanceof PublicApiError
+        ? error
+        : new PublicApiError("backend_unavailable", 503, crypto.randomUUID());
+    }
+  }
+}
+if (pageError) Astro.response.status = pageError.status >= 500 ? 503 : pageError.status;
 ---
 
-<!doctype html>
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{title}</title>
-  </head>
-  <body>
-    <main>
-      <h1>{title}</h1>
-      <p>공개 플레이타임 데이터베이스 준비 중</p>
-    </main>
-  </body>
-</html>
+<BaseLayout title="클리어타임 — 근거가 보이는 게임 플레이타임">
+  <main>
+    <p class="eyebrow">Korean playtime index</p>
+    <h1>남은 시간에<br />맞는 게임을 찾으세요.</h1>
+    <p class="lede">완료 범위와 플랫폼을 섞지 않고, 승인된 관측치의 중앙값·표본 수·revision을 함께 보여드립니다.</p>
+
+    <form class="search-form" action="/" method="get" role="search">
+      <label for="game-query">게임 제목</label>
+      <input id="game-query" name="query" value={query} maxlength="100" placeholder="한국어 또는 원제 검색" required />
+      <button type="submit">검색</button>
+    </form>
+
+    {pageError ? (
+      <section class="state-card" aria-live="polite">
+        <h2>{pageError.status >= 500 ? "데이터를 불러올 수 없습니다" : "검색어를 확인해 주세요"}</h2>
+        <p>{pageError.status >= 500 ? "플레이타임을 추측해서 보여드리지 않습니다. 잠시 뒤 다시 시도해 주세요." : "검색어는 1자 이상 100자 이하여야 합니다."}</p>
+        <p class="reference">참조 코드: {pageError.correlationId}</p>
+      </section>
+    ) : query ? (
+      <section aria-live="polite">
+        <h2 class="section-heading">‘{query}’ 검색 결과 {results.length}건</h2>
+        {results.length ? (
+          <ul class="result-list">
+            {results.map((game) => (
+              <li>
+                <a class="result-card" href={`/games/${game.id}`}>
+                  <span>
+                    <span class="result-title">{game.korean_title}</span>
+                    <span class="result-original">{game.original_title}</span>
+                  </span>
+                  <span class="arrow" aria-hidden="true">→</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : <div class="state-card"><p>기록된 별칭과 일치하는 게임이 없습니다.</p></div>}
+      </section>
+    ) : (
+      <section class="state-card">
+        <h2>숫자 하나보다 더 많은 맥락</h2>
+        <p>메인 스토리, 선택 콘텐츠 포함, 완전 공략을 구분하고 어떤 revision인지 공개합니다.</p>
+      </section>
+    )}
+  </main>
+</BaseLayout>

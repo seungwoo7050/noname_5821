@@ -1,0 +1,64 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getGame, PublicApiError, type DetailResponse } from "../../lib/api";
+import { formatMinutes, scopeLabel } from "../../lib/format";
+
+const apiBase = import.meta.env.API_BASE_URL ?? "http://127.0.0.1:8000";
+const gameId = Astro.params.id ?? "";
+let detail: DetailResponse | null = null;
+let pageError: PublicApiError | null = null;
+try {
+  detail = await getGame(gameId, apiBase);
+} catch (error) {
+  pageError = error instanceof PublicApiError
+    ? error
+    : new PublicApiError("backend_unavailable", 503, crypto.randomUUID());
+  Astro.response.status = pageError.status === 404 ? 404 : 503;
+}
+const title = detail ? `${detail.game.korean_title} 플레이타임 — 클리어타임` : "게임 정보를 불러올 수 없음 — 클리어타임";
+---
+
+<BaseLayout title={title}>
+  <main>
+    <a class="back-link" href="/">← 검색으로 돌아가기</a>
+    {pageError ? (
+      <section class="state-card" aria-live="assertive">
+        <h1>{pageError.status === 404 ? "게임을 찾을 수 없습니다" : "데이터를 불러올 수 없습니다"}</h1>
+        <p>{pageError.status === 404 ? "기록된 게임 식별자를 확인해 주세요." : "확인되지 않은 플레이타임을 대신 보여드리지 않습니다."}</p>
+        <p class="reference">참조 코드: {pageError.correlationId}</p>
+      </section>
+    ) : detail && (
+      <>
+        <header class="game-header">
+          <p class="eyebrow">Playtime record</p>
+          <h1>{detail.game.korean_title}</h1>
+          <p class="original-title">{detail.game.original_title}</p>
+        </header>
+        <section class="aggregate-grid" aria-label="플레이타임 집계">
+          {detail.aggregates.length ? detail.aggregates.map((aggregate) => (
+            <article class="aggregate-card">
+              <div class="aggregate-meta">
+                <span class="pill">{aggregate.platform.label}</span>
+                <span class="pill">{scopeLabel(aggregate.completion_scope)}</span>
+              </div>
+              {aggregate.status === "published" && aggregate.median_minutes && aggregate.sample_count ? (
+                <>
+                  <p class="duration">{formatMinutes(aggregate.median_minutes)}</p>
+                  <p class="sample">승인된 표본 {aggregate.sample_count}개 중앙값</p>
+                  <p class="revision">규칙 {aggregate.rule_revision} · revision {aggregate.revision_number} · {aggregate.revision_id}</p>
+                </>
+              ) : (
+                <>
+                  <h2>아직 충분한 데이터가 없습니다</h2>
+                  <p class="empty">승인된 관측치가 3개 이상 모이면 중앙값을 공개합니다.</p>
+                </>
+              )}
+            </article>
+          )) : (
+            <div class="state-card"><h2>아직 관측 없음</h2><p>이 게임에 연결된 공개 집계 key가 없습니다.</p></div>
+          )}
+        </section>
+      </>
+    )}
+  </main>
+</BaseLayout>
