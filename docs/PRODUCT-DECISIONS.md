@@ -5,8 +5,8 @@ decision changes only through an explicit human decision and a dedicated commit.
 
 ## Repository and history
 
-- Expected repository and visibility: A new project-specific repository named provisionally `clear-time`. Development may start locally; remote host and public/private visibility remain an owner decision that does not block the local MVP.
-- Expected baseline branch and commit: `main` begins from a documentation-only baseline containing these six documents. The exact baseline SHA must be recorded before product code is added.
+- Expected repository and visibility: The approved project repository is the public GitHub repository `seungwoo7050/audience-foundry-clear-time` with its existing `origin`. Public visibility applies to source and synthetic evidence only; it does not authorize publishing credentials, internal provenance, private operator data, or an unapproved real-observation source.
+- Expected baseline branch and commit: Implementation begins on `main` from documentation-only commit `001cf287e7b2ac7e731528302fc0bf1bfd86e36f`. Normal non-force pushes to `origin/main` are authorized; history rewriting remains forbidden.
 - Legacy code/history reuse policy: No legacy implementation or history is assumed. Reuse is limited to owner-approved generic starter configuration after license and behavior review; game records, playtime observations, aggregation rules, moderation, and migrations are created for this repository.
 - External repositories that are frozen, imported, or out of scope: HowLongToBeat and other game databases are reference products only. Their code, private interfaces, page structure, user submissions, and datasets are not imported or scraped. Existing game, Content Foundry, or other repositories remain untouched unless a later explicit decision defines a lawful one-way interface.
 
@@ -59,3 +59,7 @@ The first implementation does not add public accounts or submissions, contributo
 ## Decision-change policy
 
 Only the project owner may change a fixed product decision. A change requires a dedicated commit that updates every affected contract document, states the previous and new decision, identifies evidence or tests, describes recalculation and migration impact, and names any new human checkpoint. No implementation commit may silently change a completion category, eligibility rule, minimum sample, statistic, authority boundary, provenance rule, or MVP acceptance outcome. A rule change that can alter a displayed value requires a new named rule revision and deterministic recomputation evidence.
+
+## Approved decision changes
+
+- 2026-08-29 repository decision: The owner replaced the provisional `clear-time` identity and undecided remote visibility with public repository `seungwoo7050/audience-foundry-clear-time`, retained `main`, authorized ordinary non-force pushes to the existing `origin`, and recorded baseline `001cf287e7b2ac7e731528302fc0bf1bfd86e36f`. Read-only Git and GitHub checks verified that local `HEAD` and `origin/main` matched that commit before this change. This decision changes no product data, aggregation result, schema, migration, or external provider. The existing checkpoints for secrets, real-observation source approval, production, legal terms, and destructive migration remain unchanged.
