@@ -1,4 +1,9 @@
 from django.contrib import admin
 from django.urls import path
 
-urlpatterns = [path("ops/", admin.site.urls)]
+from .views import viability
+
+urlpatterns = [
+    path("ops/", admin.site.urls),
+    path("api/v1/viability", viability, name="api-v1-viability"),
+]

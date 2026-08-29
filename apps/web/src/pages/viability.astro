@@ -1,0 +1,36 @@
+---
+const apiBase = import.meta.env.PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
+const response = await fetch(`${apiBase}/api/v1/viability`, {
+  signal: AbortSignal.timeout(5000),
+});
+if (!response.ok) {
+  return new Response("Backend viability check failed", { status: 503 });
+}
+const proof = (await response.json()) as {
+  contract: string;
+  database: string;
+  database_name: string;
+  postgresql_version: string;
+  status: string;
+};
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>클리어타임 연결 확인</title>
+  </head>
+  <body>
+    <main>
+      <h1>실제 인터페이스 연결 확인</h1>
+      <dl>
+        <dt>계약</dt><dd data-contract>{proof.contract}</dd>
+        <dt>데이터베이스</dt><dd data-database>{proof.database}</dd>
+        <dt>PostgreSQL</dt><dd data-postgresql>{proof.postgresql_version}</dd>
+        <dt>상태</dt><dd data-status>{proof.status}</dd>
+      </dl>
+    </main>
+  </body>
+</html>
