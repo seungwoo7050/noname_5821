@@ -6,7 +6,7 @@ services:
       POSTGRES_USER: clear_time
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
-      - "127.0.0.1:55432:5432"
+      - "127.0.0.1:55433:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U clear_time -d clear_time"]
       interval: 2s
