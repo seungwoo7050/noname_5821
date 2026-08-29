@@ -14,6 +14,7 @@ repository.
 | Astro | 7.2.9 | npm / `withastro/astro` | MIT | server-rendered public web application and routing |
 | `@astrojs/node` | 11.1.4 | npm / `withastro/adapters` | MIT | standalone Node server adapter |
 | `@astrojs/check` | 0.9.10 | npm / `withastro/language-tools` | MIT | local/CI Astro and TypeScript checks |
+| `@types/node` | 22.20.1 | npm / `DefinitelyTyped/DefinitelyTyped` | MIT | Node 22 type declarations for local contract tests |
 | TypeScript | 5.9.3 | npm / `microsoft/TypeScript` | Apache-2.0 | static checking and compilation |
 | Vitest | 4.1.11 | npm / `vitest-dev/vitest` | MIT | isolated frontend tests |
 | Playwright Test | 1.62.1 | npm / `microsoft/playwright` | Apache-2.0 | local closed-loop browser acceptance |
