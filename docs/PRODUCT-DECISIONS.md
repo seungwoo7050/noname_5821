@@ -20,7 +20,7 @@ Make each statement testable.
 3. Draft and rejected observations never contribute to a public aggregate.
 4. An approved observation is immutable. Correction creates a new observation and moderation decision; it does not rewrite the old duration.
 5. An aggregate includes only observations whose game, platform, and completion scope exactly match its key.
-6. The provisional MVP publishes a median only when at least three eligible observations exist. A smaller set is explicitly `insufficient_data`.
+6. The provisional MVP publishes a median only when at least three eligible observations exist. A smaller set is explicitly `insufficient_data`. Rule `median-v1` uses the middle value for an odd sample and the arithmetic mean of the two middle values for an even sample; an exact half-minute result is rounded up to the next whole minute (`600.5` becomes `601`).
 7. Every aggregate revision records its rule revision and exact included observation identities so the displayed value can be reproduced.
 8. Approval, rejection, aggregate creation, and aggregate supersession are attributable to an authenticated operator and recorded in append-only audit evidence.
 9. Final observation approval, aggregate revision creation, and audit event commit atomically or not at all.
@@ -63,3 +63,4 @@ Only the project owner may change a fixed product decision. A change requires a 
 ## Approved decision changes
 
 - 2026-08-29 repository decision: The owner replaced the provisional `clear-time` identity and undecided remote visibility with public repository `seungwoo7050/audience-foundry-clear-time`, retained `main`, authorized ordinary non-force pushes to the existing `origin`, and recorded baseline `001cf287e7b2ac7e731528302fc0bf1bfd86e36f`. Read-only Git and GitHub checks verified that local `HEAD` and `origin/main` matched that commit before this change. This decision changes no product data, aggregation result, schema, migration, or external provider. The existing checkpoints for secrets, real-observation source approval, production, legal terms, and destructive migration remain unchanged.
+- 2026-08-29 `median-v1` whole-minute decision: The owner resolved the previously unspecified even-sample half-minute case by approving arithmetic median rounded half-up to a whole minute. For integer-minute inputs this affects only exact `.5` results, for example `600.5` becomes `601`. No aggregate data existed when the decision was recorded, so no migration or recalculation is required. Focused odd, even-integer, and even-half tests plus deterministic replay are required; later changes require a new rule revision and recalculation evidence.
