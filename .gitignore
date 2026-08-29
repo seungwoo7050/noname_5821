@@ -14,5 +14,6 @@ __pycache__/
 playwright-report/
 test-results/
 output/
+.playwright-cli/
 tmp/
 .cache/
