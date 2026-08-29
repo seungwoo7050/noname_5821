@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://clear-time.local/contracts/public-api/v1/game-detail.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract", "game", "aggregates"],
+  "properties": {
+    "contract": { "const": "public-api/v1" },
+    "game": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "slug", "korean_title", "original_title"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "slug": { "type": "string", "minLength": 1 },
+        "korean_title": { "type": "string", "minLength": 1 },
+        "original_title": { "type": "string", "minLength": 1 }
+      }
+    },
+    "aggregates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["platform", "completion_scope", "status"],
+        "properties": {
+          "platform": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "code", "label"],
+            "properties": {
+              "id": { "type": "string", "format": "uuid" },
+              "code": { "type": "string", "minLength": 1 },
+              "label": { "type": "string", "minLength": 1 }
+            }
+          },
+          "completion_scope": {
+            "enum": ["main_story", "main_plus_optional", "completionist"]
+          },
+          "status": { "enum": ["insufficient_data", "published"] },
+          "median_minutes": { "type": "integer", "minimum": 1 },
+          "sample_count": { "type": "integer", "minimum": 3 },
+          "rule_revision": { "const": "median-v1" },
+          "revision_id": { "type": "string", "format": "uuid" },
+          "revision_number": { "type": "integer", "minimum": 1 }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "status": { "const": "published" } } },
+            "then": {
+              "required": [
+                "median_minutes",
+                "sample_count",
+                "rule_revision",
+                "revision_id",
+                "revision_number"
+              ]
+            },
+            "else": {
+              "not": {
+                "anyOf": [
+                  { "required": ["median_minutes"] },
+                  { "required": ["sample_count"] },
+                  { "required": ["revision_id"] }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://clear-time.local/contracts/public-api/v1/game-search.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract", "results"],
+  "properties": {
+    "contract": { "const": "public-api/v1" },
+    "results": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "slug", "korean_title", "original_title"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "slug": { "type": "string", "minLength": 1 },
+          "korean_title": { "type": "string", "minLength": 1 },
+          "original_title": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}
