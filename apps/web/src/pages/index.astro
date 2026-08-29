@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { PublicApiError, searchGames, type GameSummary } from "../lib/api";
 
-const apiBase = import.meta.env.API_BASE_URL ?? "http://127.0.0.1:8000";
+const apiBase = process.env.API_BASE_URL ?? "http://127.0.0.1:8000";
 const query = Astro.url.searchParams.get("query")?.trim() ?? "";
 let results: GameSummary[] = [];
 let pageError: PublicApiError | null = null;
